@@ -41,18 +41,31 @@
   }
   // Apply before the scheme adapter exposes its artwork; it must not install another resize handler.
   apply();
-  // Keep the source artwork covered until the adapter has rendered and media is ready.
-  // Window load also covers the embedded SVG backgrounds in schemes four and five.
-  let pageLoaded=document.readyState==='complete',adapterReady=false,imagesDecoded=false;
+  // Reveal after the actual scene images decode; audio and unrelated resources
+  // must not hold the first frame until the full window load event.
+  let adapterReady=false,imagesDecoded=false;
   function reveal(){
-    if(pageLoaded&&adapterReady&&imagesDecoded)world.dataset.bw06Ready='true';
+    if(adapterReady&&imagesDecoded)world.dataset.bw06Ready='true';
   }
-  addEventListener('load',()=>{pageLoaded=true;reveal();},{once:true});
+  function imageReady(img){
+    if(typeof img.decode==='function')return img.decode().catch(()=>{});
+    if(img.complete)return Promise.resolve();
+    return new Promise(resolve=>{
+      img.addEventListener('load',resolve,{once:true});
+      img.addEventListener('error',resolve,{once:true});
+    });
+  }
   function ready(){
     if(adapterReady)return;
     adapterReady=true;
-    const images=[...world.querySelectorAll('img')];
-    Promise.all(images.map(img=>typeof img.decode==='function'?img.decode().catch(()=>{}):Promise.resolve()))
+    const images=[...world.querySelectorAll('img')].map(imageReady);
+    for(const svgImage of world.querySelectorAll('image')){
+      const href=svgImage.getAttribute('href')||svgImage.getAttribute('xlink:href');
+      if(!href||typeof Image!=='function')continue;
+      const img=new Image();img.decoding='async';img.src=href;
+      images.push(imageReady(img));
+    }
+    Promise.all(images)
       .then(()=>{imagesDecoded=true;reveal();});
   }
   if(fromURL)saveStorage();
@@ -68,26 +81,26 @@
   #bw06-size-dialog button[type=submit]{background:#54d89b;color:#142b20}#bw06-size-dialog .note{color:#aaa;font-size:12px}
   #bw06-size-dialog p{margin:10px 0}#bw06-size-dialog button:focus-visible,#bw06-size-dialog input:focus-visible,#bw06-size-dialog select:focus-visible,#bw06-size-open:focus-visible{outline:2px solid #54d89b;outline-offset:2px}`;
   document.head.append(style);
-  const button=document.createElement('button');button.id='bw06-size-open';button.textContent='尺寸校准';button.type='button';
+  const button=document.createElement('button');button.id='bw06-size-open';button.textContent='Size calibration';button.type='button';
   const dialog=document.createElement('dialog');dialog.id='bw06-size-dialog';dialog.setAttribute('aria-labelledby','bw06-size-title');
-  dialog.innerHTML=`<div class="bw06-size-heading"><h2 id="bw06-size-title">视图与尺寸校准</h2><button type="button" data-close aria-label="关闭尺寸校准">×</button></div>
-  <label>显示方式<select name="view"><option value="fit">自适应展示</option><option value="calibrated" data-calibrated-option>校准尺寸</option></select></label>
+  dialog.innerHTML=`<div class="bw06-size-heading"><h2 id="bw06-size-title">View & size calibration</h2><button type="button" data-close aria-label="Close size calibration">×</button></div>
+  <label>Display mode<select name="view"><option value="fit">Fit to screen</option><option value="calibrated" data-calibrated-option>Calibrated size</option></select></label>
   <p class="note" data-summary></p>
-  <p>用尺子测量屏幕中整机左右外壳最外侧之间的宽度，输入实测厘米数。请测量整机，不是黑色面板。</p>
-  <form><label>目标整机宽度（cm）<input name="target" type="number" min="1" max="100" step="0.01" required></label>
-  <p class="note">28 cm 沿用历史参考值；如有准确整机尺寸，请修改后再校准。</p>
-  <label>当前屏幕实测宽度（cm）<input name="measured" type="number" min="0.1" max="200" step="0.01" placeholder="例如 25.50" required></label>
-  <button type="submit">按实测校准</button><button type="button" data-reset>恢复默认比例</button></form>
+  <p>Measure the full device width on screen, from outer edge to outer edge, with a ruler. Enter the measurement in centimeters.</p>
+  <form><label>Target device width (cm)<input name="target" type="number" min="1" max="100" step="0.01" required></label>
+  <p class="note">28 cm is the reference width. Update it if you have the exact device measurement.</p>
+  <label>Measured width on screen (cm)<input name="measured" type="number" min="0.1" max="200" step="0.01" placeholder="e.g. 25.50" required></label>
+  <button type="submit">Apply calibration</button><button type="button" data-reset>Reset size</button></form>
   <p data-message role="status"></p>
-  <p class="note">各方案共用本屏幕的校准结果，切换方案沿用当前显示方式。校准后尺寸固定，放不下时滚动查看。换屏幕、系统显示缩放或浏览器缩放后，请重新校准。</p>`;
+  <p class="note">All designs share this calibration. Calibrated size stays fixed; scroll if needed. Recalibrate after changing screens or display/browser zoom.</p>`;
   document.body.append(button,dialog);
   const target=dialog.querySelector('[name=target]'),measured=dialog.querySelector('[name=measured]'),view=dialog.querySelector('[name=view]'),message=dialog.querySelector('[data-message]');
   target.value=state.calibration?.targetCm||28;
   function updateUI(){
     const usable=state.calibration?.screen===screenSignature();
     view.value=state.mode;dialog.querySelector('[data-calibrated-option]').disabled=!usable;
-    button.textContent=state.mode==='calibrated'?'尺寸校准 · 已校准':'尺寸校准';
-    dialog.querySelector('[data-summary]').textContent=state.mode==='calibrated'?`当前按 ${state.calibration.targetCm} cm 的整机宽度显示，请用尺子复核。`:state.calibration&&!usable?'显示设置已变化，请重新校准。':state.calibration?'当前为自适应展示，可切回已保存的校准尺寸。':'当前为自适应展示，尚未进行实测校准。';
+    button.textContent=state.mode==='calibrated'?'Size · Calibrated':'Size calibration';
+    dialog.querySelector('[data-summary]').textContent=state.mode==='calibrated'?`Device width set to ${state.calibration.targetCm} cm. Check it with a ruler.`:state.calibration&&!usable?'Display settings changed. Please recalibrate.':state.calibration?'Fit to screen. A saved calibration is available.':'Fit to screen. No calibration saved.';
   }
   function notify(){dispatchEvent(new CustomEvent('bw06viewchange'));}
   function refresh(){apply();updateUI();notify();}
@@ -95,18 +108,18 @@
   dialog.querySelector('form').onsubmit=e=>{
     e.preventDefault();
     const targetCm=Number(target.value),cm=Number(measured.value),shownShellWidth=world.getBoundingClientRect().width*SHELL_WIDTH/WIDTH,pxPerCm=shownShellWidth/cm;
-    if(!validNumber(targetCm,1,100)||!validNumber(cm,.1,200)||!validNumber(pxPerCm,1,400)){message.textContent='请核对目标尺寸与实测宽度，填写有效的正数。';return;}
+    if(!validNumber(targetCm,1,100)||!validNumber(cm,.1,200)||!validNumber(pxPerCm,1,400)){message.textContent='Enter valid positive values for both widths.';return;}
     state={version:2,bounds:BOUNDS,mode:'calibrated',calibration:{targetCm,pxPerCm,screen:screenSignature()}};
     const saved=remember();refresh();measured.value='';
-    message.textContent=saved?`已保存并应用到各方案。关闭窗口后，请用尺子复核整机宽度为 ${targetCm} cm。`:'本页校准已生效，但浏览器不允许保存；刷新后需重新校准。';
+    message.textContent=saved?`Saved for all designs. Close this window and check that the device is ${targetCm} cm wide.`:'Calibration applied. This browser could not save it; recalibrate after refreshing.';
   };
   view.onchange=()=>{
     state.mode=view.value==='calibrated'&&state.calibration?.screen===screenSignature()?'calibrated':'fit';
-    const saved=remember();refresh();message.textContent=saved?'显示方式已保存，切换方案将保持一致。':'本页显示方式已生效，但浏览器不允许保存。';
+    const saved=remember();refresh();message.textContent=saved?'Display mode saved for all designs.':'Display mode applied. This browser could not save it.';
   };
   dialog.querySelector('[data-reset]').onclick=()=>{
     state=initial();const saved=remember();target.value=28;measured.value='';refresh();
-    message.textContent=saved?'已恢复各方案的默认自适应比例。':'本页已恢复默认比例，但浏览器不允许保存。';
+    message.textContent=saved?'Reset all designs to fit the screen.':'Size reset. This browser could not save it.';
   };
   addEventListener('resize',()=>{
     if(state.mode==='calibrated'&&state.calibration.screen!==screenSignature()){state.mode='fit';remember();refresh();}

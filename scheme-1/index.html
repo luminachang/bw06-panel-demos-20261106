@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en-US">
 <head>
 <meta charset="UTF-8">
-<title>方案一 - 硬件控制面板</title><style id="bw06-initial-view">
+<title>BW06 · Design 1</title><link rel="preload" as="image" href="../assets/device-front-060e0bbf0111.webp" type="image/webp" fetchpriority="high"><style id="bw06-initial-view">
 html,body{background:#202020!important}
 .device-viewport,.viewport{width:min(100vw,1280px);height:min(70.3125vw,900px);overflow:hidden}
 .device-world:not([data-bw06-ready="true"]),.device:not([data-bw06-ready="true"]){opacity:0!important;pointer-events:none!important}
@@ -61,7 +61,7 @@ html,body{margin:0!important;padding:0!important;background:#202020!important}
 .panel-stage{border-radius:300px 300px 0 0;overflow:hidden;position:absolute!important;left:237.5px!important;top:230px!important;margin:0!important;z-index:1}
 .status,.boot-message,.region-map{display:none!important}
 </style></head>
-<body data-bw06-scheme="1"><div class="device-viewport"><div class="device-world"><img class="device-background" src="./device-front.png" alt="">
+<body data-bw06-scheme="1"><div class="device-viewport"><div class="device-world"><img class="device-background" src="../assets/device-front-060e0bbf0111.webp" loading="eager" fetchpriority="high" decoding="async" alt="">
 <div class="panel-stage">
 <svg xmlns="http://www.w3.org/2000/svg" width="2140" height="402" viewBox="0 0 2140 402" fill="none">
 <rect x="0" y="0" width="2140" height="402" fill="black"/>
@@ -177,32 +177,32 @@ html,body{margin:0!important;padding:0!important;background:#202020!important}
 </clipPath>
 </defs>
 </svg>
-<div class="ui-layer" aria-label="硬件面板交互层">
+<div class="ui-layer" aria-label="Hardware panel controls">
   <div class="off-mask"></div>
   <div class="light-strip"></div>
   <div class="dim mode-dim"></div>
   <div class="dim step-dim sterilize"></div>
   <div class="lock-glow"></div>
-  <div class="boot-message">正在开机…</div>
-  <button class="hit power-hit" aria-label="长按开关机"></button>
-  <button class="hit lock-hit" aria-label="童锁"></button>
-  <button class="hit light-hit" aria-label="灯光"></button>
-  <button class="hit start-hit" aria-label="启动或暂停"></button>
-  <button class="hit mode-hit mode-standard" data-mode="standard" aria-label="标准洗"></button>
-  <button class="hit mode-hit mode-strong" data-mode="strong" aria-label="强力洗"></button>
-  <button class="hit mode-hit mode-rapid" data-mode="rapid" aria-label="快速洗"></button>
-  <button class="hit mode-hit mode-sterilize" data-mode="sterilize" aria-label="消毒"></button>
-  <button class="hit mode-hit mode-dry" data-mode="dry" aria-label="烘干"></button>
-  <button class="hit mode-hit mode-selfclean" data-mode="selfclean" aria-label="自清洁"></button>
+  <div class="boot-message">Starting…</div>
+  <button class="hit power-hit" aria-label="Press and hold to turn on/off"></button>
+  <button class="hit lock-hit" aria-label="Child lock"></button>
+  <button class="hit light-hit" aria-label="Light"></button>
+  <button class="hit start-hit" aria-label="Start/Pause"></button>
+  <button class="hit mode-hit mode-standard" data-mode="standard" aria-label="Normal wash"></button>
+  <button class="hit mode-hit mode-strong" data-mode="strong" aria-label="Strong wash"></button>
+  <button class="hit mode-hit mode-rapid" data-mode="rapid" aria-label="Fast wash"></button>
+  <button class="hit mode-hit mode-sterilize" data-mode="sterilize" aria-label="Steam"></button>
+  <button class="hit mode-hit mode-dry" data-mode="dry" aria-label="Drying"></button>
+  <button class="hit mode-hit mode-selfclean" data-mode="selfclean" aria-label="Self-clean"></button>
 </div>
 </div>
-<div class="region-map" aria-label="面板元素区域标注">
-<div class="region r-step-wash"><span>洗</span></div><div class="region r-step-arrow1"><span>→</span></div><div class="region r-step-disinfect"><span>消毒</span></div><div class="region r-step-arrow2"><span>→</span></div><div class="region r-step-dry"><span>烘干</span></div><div class="region r-step-arrow3"><span>→</span></div><div class="region r-step-store"><span>储存</span></div><div class="region r-display"><span>显示区</span></div><div class="region r-time"><span>三位数码管时间</span></div>
+<div class="region-map" aria-label="Panel region labels">
+<div class="region r-step-wash"><span>Wash</span></div><div class="region r-step-arrow1"><span>→</span></div><div class="region r-step-disinfect"><span>Steam</span></div><div class="region r-step-arrow2"><span>→</span></div><div class="region r-step-dry"><span>Drying</span></div><div class="region r-step-arrow3"><span>→</span></div><div class="region r-step-store"><span>Storage</span></div><div class="region r-display"><span>Display</span></div><div class="region r-time"><span>Three-digit time display</span></div>
 <div class="region r-standard"><span>Standard</span></div><div class="region r-strong"><span>Strong</span></div><div class="region r-rapid"><span>Rapid</span></div><div class="region r-sterilize"><span>Sterilize</span></div><div class="region r-dry"><span>Dry</span></div><div class="region r-selfclean"><span>Self Clean</span></div>
-<div class="region r-softwater"><span>软水</span></div><div class="region r-lowwater"><span>缺水</span></div><div class="region r-lid"><span>开盖</span></div><div class="region r-appointment"><span>预约</span></div><div class="region r-lock-indicator"><span>童锁灯</span></div><div class="region r-detergent"><span>洗涤剂</span></div>
-<div class="region r-lock"><span>童锁按键</span></div><div class="region r-light"><span>灯光按键</span></div><div class="region r-start"><span>启动/暂停</span></div><div class="region r-power"><span>开关机</span></div>
+<div class="region r-softwater"><span>Water softener</span></div><div class="region r-lowwater"><span>Low water</span></div><div class="region r-lid"><span>Lid open</span></div><div class="region r-appointment"><span>Scheduled</span></div><div class="region r-lock-indicator"><span>Child lock indicator</span></div><div class="region r-detergent"><span>Detergent</span></div>
+<div class="region r-lock"><span>Child lock button</span></div><div class="region r-light"><span>Light button</span></div><div class="region r-start"><span>Start/Pause</span></div><div class="region r-power"><span>Power</span></div>
 </div>
 
 
-</div></div><script src="../panel-state.js?v=20261105-state-2"></script><script src="../panel-tools.js?v=20261105-reservation-row-1"></script><script src="../size-calibration.js?v=20261105-online-1"></script><script src="app.js?v=20261105-reserved-mode-1"></script><script src="../scheme-nav.js?v=20261105-online-1"></script></body>
+</div></div><script src="../panel-state.js?v=20261106-first-four-1"></script><script src="../panel-tools.js?v=20261106-first-four-1"></script><script src="../size-calibration.js?v=20261106-first-four-1"></script><script src="app.js?v=20261106-first-four-1"></script><script src="../scheme-nav.js?v=20261106-first-four-1"></script></body>
 </html>

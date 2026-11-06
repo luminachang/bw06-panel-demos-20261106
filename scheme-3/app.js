@@ -19,6 +19,6 @@
   const C=BW06Panel.mount({modes:names,defaultMode:'auto',reservationMode:'standard',memoryKey:'solution-three-last-started-mode',beep:'assets/beep.mp3'},render,{digits:digits.flat().map(x=>x.p),colon:artwork('48:2035'),start:artwork('48:2144'),water:artwork('48:2078'),lid:artwork('48:2073'),lock:artwork('48:2060')});
   function key(name,label,x,y,w,h,action,long,threshold=1000){const b=document.getElementById(name)||document.createElement('button');b.className='hit';b.id=name;b.setAttribute('aria-label',label);Object.assign(b.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});panel.append(b);BW06Panel.bind(b,action,long,threshold);}
   names.forEach((m,i)=>key(m,m,i<5?[120,263,405,542,679][i]:1375,155,i<5?132:145,155,()=>C.selectMode(m)));
-  key('light','灯光',1530,155,140,155,C.toggleLight);key('power','电源',1903.54,162,150,120,null,C.power,800);key('start','启停／童锁',1701,164,165,135,C.start,C.toggleLock);
+  key('light','Light',1530,155,140,155,C.toggleLight);key('power','Power',1903.54,162,150,120,null,C.power,800);key('start','Start/Pause / Child lock',1701,164,165,135,C.start,C.toggleLock);
   C.emit();device.style.visibility='visible';BW06View.ready();
 })();
