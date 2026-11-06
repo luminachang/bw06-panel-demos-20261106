@@ -39,7 +39,7 @@
     else if(!v.custom&&v.seq.includes('wash')){
       if(!active&&!done&&!reserved)set(ids.mode,.3);
       const index=config.modes.indexOf(v.mode);
-      if(index>=0)set([ids.mode[index]],done?.3:1);
+      if(index>=0)set([ids.mode[index]],done||active&&v.current!=='wash'?.3:1);
       set(ids.modeFrame,reserved?0:.3);
     }
     const programLevels={};
